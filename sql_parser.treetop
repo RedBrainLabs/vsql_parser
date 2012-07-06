@@ -39,16 +39,19 @@ grammar Sql
   rule alias
     '"' [^\"] '"'
     /
-    (!('on')) [\w]+
+    (!(keyword)) [\w]+
   end
 
   rule expression
+    ('not' space)?
     (
       '(' query ')' <Query>
       /
       '(' expression ')'
       /
-      sub_expression) (space* operator space expression)?
+      sub_expression)
+    cast:('::' [\w]+)?
+    (space* operator space expression)?
   end
 
   rule sub_expression
