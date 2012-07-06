@@ -120,8 +120,9 @@ grammar VSql
     '(' query ')' <Entity>
   end
 
+  # matches at least one space. Handles comments, too.
   rule space
-    [\s]+ / ('--' (!"\n" .)+ )
+    ([\s]+ / ('--' (!"\n" .)+ ))+
   end
 
   rule keyword

@@ -136,4 +136,17 @@ EOF
     assert_parse("SELECT * FROM table LIMIT 1")
   end
 
+  it "handles comments" do
+    assert_parse <<EOF
+-- This is a multi-line comment
+-- it spans multiple lines
+SELECT a,
+       b, -- comment
+          -- further
+       c
+FROM table
+EOF
+  end
+
+
 end
