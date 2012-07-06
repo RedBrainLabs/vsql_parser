@@ -65,7 +65,7 @@ grammar Sql
   end
 
   rule operator
-    [+-/=\|><!]+ / 'is not' / 'is' / 'like' / 'not in' / 'in' / 'between' / 'and' / 'or'
+    [+\-/=\|><!]+ / 'is not' / 'is' / 'like' / 'not in' / 'in' / 'between' / 'and' / 'or'
   end
 
   rule case_statement
