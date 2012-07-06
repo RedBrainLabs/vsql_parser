@@ -79,7 +79,7 @@ grammar Sql
   end
 
   rule from_statement
-    'from' space+ from_expression <Statement>
+    'from' space+ from_expression ((space 'as')? space alias)? <Statement>
   end
 
   rule from_expression
