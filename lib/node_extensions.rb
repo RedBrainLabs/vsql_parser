@@ -1,48 +1,32 @@
 module Sql
-  # class IntegerLiteral < Treetop::Runtime::SyntaxNode
-  #   def to_array
-  #     return self.text_value.to_i
-  #   end
-  # end
-
-  # class StringLiteral < Treetop::Runtime::SyntaxNode
-  #   def to_array
-  #     return eval self.text_value
-  #   end
-  # end
-
-  # class FloatLiteral < Treetop::Runtime::SyntaxNode
-  #   def to_array
-  #     return self.text_value.to_f
-  #   end
-  # end
-
-  # class Identifier < Treetop::Runtime::SyntaxNode
-  #   def to_array
-  #     return self.text_value.to_sym
-  #   end
-  # end
+  module Helpers
+    def self.find_elements(node, klass)
+      results = []
+      return results unless node.elements
+      node.elements.each do |e|
+        if e.is_a?(klass)
+          results << e
+        else
+          results.concat(find_elements(e, klass))
+        end
+      end
+      results
+    end
+  end
 
   class Operator < Treetop::Runtime::SyntaxNode
   end
 
-  # class ItemsNode < Treetop::Runtime::SyntaxNode
-  #   def values
-  #     items.values.unshift(item.value)
-  #   end
-  # end
-
-  # class ItemNode < Treetop::Runtime::SyntaxNode
-  #   def values
-  #     [value]
-  #   end
-
-  #   def value
-  #     text_value.to_sym
-  #   end
-  # end
-
   class Statement < Treetop::Runtime::SyntaxNode
+  end
+
+  class SelectStatement < Treetop::Runtime::SyntaxNode
+    def expressions
+      Helpers.find_elements(self, SelectExpression)
+    end
+  end
+
+  class SelectExpression < Treetop::Runtime::SyntaxNode
   end
 
   class Entity < Treetop::Runtime::SyntaxNode
@@ -57,6 +41,9 @@ module Sql
   class Query < Treetop::Runtime::SyntaxNode
     # def to_array
     #   return self.elements.map {|x| x.to_array}
+    # end
+    # def select_statement
+    #   elements.detect { |e| e.is_a?(SelectStatement) }
     # end
   end
 end

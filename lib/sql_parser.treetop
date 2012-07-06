@@ -9,13 +9,13 @@ grammar Sql
       (space order_by_statement)?
       (space limit_statement)?
       )?
-    space*
-    ('union' space query)?
+    (space* 'union' space query)?
+    (space / ';')*
     <Query>
   end
 
   rule select_statement
-    'select' space select_expressions <Statement>
+    'select' space select_expressions <SelectStatement>
   end
 
   rule join_statement
@@ -55,11 +55,7 @@ grammar Sql
   end
 
   rule select_expression
-    expression space 'as' space alias <Entity>
-    /
-    expression
-    /
-    expression space alias <Entity>
+    expression (space 'as' space alias)? <SelectExpression>
   end
 
   rule alias
@@ -73,11 +69,11 @@ grammar Sql
     (
       '(' query ')' <Query>
       /
-      '(' expression ')' <Entity>
+      '(' space? expression space? ')' <Entity>
       /
       sub_expression)
     ('::' [\w]+)? # cast
-    (space* operator space expression)?
+    (space* operator space? expression)?
   end
 
   rule sub_expression
@@ -91,7 +87,9 @@ grammar Sql
   end
 
   rule operator
-    [+\-/=\|><!]+ / 'is not' / 'is' / 'like' / 'not in' / 'in' / 'between' / 'and' / 'or'
+    [+\-/=\|><!]+
+    /
+    ('is not' / 'is' / 'like' / 'not in' / 'in' / 'between' / 'and' / 'or') &space
   end
 
   rule case_statement
@@ -107,11 +105,9 @@ grammar Sql
   end
 
   rule field_entity
-    '"' [\w ]+ '.*'? '"' <QuotedEntity>
+    '"' [\w\.\* ]+ '"' <QuotedEntity>
     /
-    [\w]+ '.*'?  <Entity>
-    /
-    ('*') <Entity>
+    [\w\.\*]+ <Entity>
   end
 
   rule from_statement
@@ -120,6 +116,8 @@ grammar Sql
 
   rule from_expression
     [\w]+ <Entity>
+    /
+    '(' query ')' <Entity>
   end
 
   rule space
@@ -127,7 +125,7 @@ grammar Sql
   end
 
   rule keyword
-    'select' / 'from' / 'inner' / 'outer' / 'full' / 'left' / 'right' / 'join' / 'on' / 'where' / 'group by' / 'order by' / 'having' / 'limit'
+    'select' / 'from' / 'inner' / 'outer' / 'full' / 'left' / 'right' / 'join' / 'on' / 'where' / 'group by' / 'order by' / 'having' / 'limit' / 'union'
   end
 
 end
