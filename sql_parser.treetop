@@ -47,10 +47,10 @@ grammar Sql
     (
       '(' query ')' <Query>
       /
-      '(' expression ')'
+      '(' expression ')' <Entity>
       /
       sub_expression)
-    cast:('::' [\w]+)?
+    ('::' [\w]+)? # cast
     (space* operator space expression)?
   end
 
