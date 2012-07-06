@@ -10,6 +10,7 @@ grammar Sql
       (space limit_statement)?
       )?
     space*
+    ('union' space query)?
     <Query>
   end
 
