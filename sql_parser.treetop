@@ -1,7 +1,11 @@
 grammar Sql
   rule query
-    space* select_statement space
-    (from_statement (space join_statement)* )? <Query>
+    space*
+    select_statement
+    (space from_statement (space join_statement)* )?
+    (space where_statement (space join_statement)* )?
+    space*
+    <Query>
   end
 
   rule select_statement
@@ -10,6 +14,10 @@ grammar Sql
 
   rule join_statement
     ('left' / 'outer' / 'inner' / 'right' / 'full' / space)* 'join' space expression space* ('as' space)? (alias space)? 'on' space expression
+  end
+
+  rule where_statement
+    'where' space expression
   end
 
   rule select_expressions
@@ -35,13 +43,12 @@ grammar Sql
   end
 
   rule expression
-    '(' query ')' <Query>
-    /
-    '(' expression ')'
-    /
-    sub_expression space* operator space* expression
-    /
-    sub_expression
+    (
+      '(' query ')' <Query>
+      /
+      '(' expression ')'
+      /
+      sub_expression) (space* operator space expression)?
   end
 
   rule sub_expression
@@ -55,7 +62,7 @@ grammar Sql
   end
 
   rule operator
-    [+-/=\|><]+ / 'is not' / 'is' / 'like' / 'not in' / 'in'
+    [+-/=\|><!]+ / 'is not' / 'is' / 'like' / 'not in' / 'in' / 'between' / 'and' / 'or'
   end
 
   rule case_statement
@@ -88,6 +95,10 @@ grammar Sql
 
   rule space
     [\s]+
+  end
+
+  rule keyword
+    'select' / 'from' / 'inner' / 'outer' / 'full' / 'left' / 'right' / 'join' / 'on' / 'where' / 'group by' / 'order by' / 'having' / 'limit'
   end
 
 end

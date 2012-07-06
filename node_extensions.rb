@@ -23,21 +23,24 @@ module Sql
   #   end
   # end
 
-  class ItemsNode < Treetop::Runtime::SyntaxNode
-    def values
-      items.values.unshift(item.value)
-    end
+  class Operator < Treetop::Runtime::SyntaxNode
   end
 
-  class ItemNode < Treetop::Runtime::SyntaxNode
-    def values
-      [value]
-    end
+  # class ItemsNode < Treetop::Runtime::SyntaxNode
+  #   def values
+  #     items.values.unshift(item.value)
+  #   end
+  # end
 
-    def value
-      text_value.to_sym
-    end
-  end
+  # class ItemNode < Treetop::Runtime::SyntaxNode
+  #   def values
+  #     [value]
+  #   end
+
+  #   def value
+  #     text_value.to_sym
+  #   end
+  # end
 
   class Statement < Treetop::Runtime::SyntaxNode
   end
