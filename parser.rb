@@ -7,6 +7,11 @@ BASE_PATH ||= File.expand_path(File.dirname(__FILE__))
 # Load our custom syntax node classes so the parser can use them
 load File.join(BASE_PATH, 'node_extensions.rb')
 
+NORMAL_COLOR ||= 37
+def colorize(color, output)
+  "\e[0;#{color}m#{output}\e[0;#{NORMAL_COLOR}m"
+end
+
 class Parser
 
   # Load the Treetop grammar from the 'sql_parser' file, and
@@ -27,6 +32,10 @@ class Parser
     # If the AST is nil then there was an error during parsing
     # we need to report a simple error message to help the user
     if(tree.nil?)
+      STDERR.puts
+      STDERR.puts( colorize(42, data[0..(@@parser.max_terminal_failure_index - 1)]) +
+                   colorize(41, data[(@@parser.max_terminal_failure_index)..-1]))
+      STDERR.puts
       raise Exception, @@parser.failure_reason
       STDERR.puts @@parser.failure_reason
       return @@parser
