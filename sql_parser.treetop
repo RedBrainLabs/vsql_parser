@@ -2,8 +2,13 @@ grammar Sql
   rule query
     space*
     select_statement
-    (space from_statement (space join_statement)* )?
-    (space where_statement (space join_statement)* )?
+    (space from_statement (space join_statement)*
+      (space where_statement)?
+      (space group_by_statement)?
+      (space having_statement)?
+      (space order_by_statement)?
+      (space limit_statement)?
+      )?
     space*
     <Query>
   end
@@ -20,12 +25,32 @@ grammar Sql
     'where' space expression
   end
 
-  rule select_expressions
-    select_expression (select_separator select_expression)* <Entity>
+  rule having_statement
+    'having' space expression
   end
 
-  rule select_separator
+  rule group_by_statement
+    'group by' space expression (expression_separator expression)* <Statement>
+  end
+
+  rule order_by_statement
+    'order by' space order_by_expression (expression_separator order_by_expression)* <Statement>
+  end
+
+  rule limit_statement
+    'limit' space [0-9]+
+  end
+
+  rule select_expressions
+    select_expression (expression_separator select_expression)* <Entity>
+  end
+
+  rule expression_separator
     space* ',' space* <Entity>
+  end
+
+  rule order_by_expression
+    expression (space ('desc' / 'asc'))?
   end
 
   rule select_expression
