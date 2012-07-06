@@ -1,0 +1,87 @@
+# as a general rule, each statement and expression is responsible for consuming the trailing space
+grammar Sql
+  rule query
+    space? select_statement space* select_expressions (from_statement (join_statement)* )? <Query>
+  end
+
+  rule select_statement
+    'select' <Statement>
+  end
+
+  rule join_statement
+    'undefined'
+  end
+
+  rule select_expressions
+    select_expression space* (select_separator select_expression space*)* <Entity>
+  end
+
+  rule select_separator
+    ',' space* <Entity>
+  end
+
+  rule select_expression
+    expression space 'as' space [\w]+ <Entity>
+    /
+    expression
+    /
+    expression space [\w]+ <Entity>
+  end
+
+  rule expression
+    '(' query ')' <Query>
+    /
+    '(' expression ')'
+    /
+    sub_expression space* operator space* expression
+    /
+    sub_expression
+  end
+
+  rule sub_expression
+    case_statement
+    /
+    function
+    /
+    string_literal
+    /
+    field_entity
+  end
+
+  rule operator
+    [+-/=\|><]+ / 'is not' / 'is' / 'like'
+  end
+
+  rule case_statement
+    'case' space ('when' space expression space 'then' space expression space)* ('else' space expression space)? 'end' <Entity>
+  end
+
+  rule function
+    [\w]+ space* '(' (expression / ',' / space)* ')' <Entity>
+  end
+
+  rule string_literal
+    "'" [^\']+ "'"
+  end
+
+  rule field_entity
+    '"' [\w ]+ '.*'? '"' <QuotedEntity>
+    /
+    [\w]+ '.*'?  <Entity>
+    /
+    ('*') <Entity>
+  end
+
+  rule from_statement
+    'from' space+ from_expression <Statement>
+  end
+
+  rule from_expression
+    [\w]+ <Entity>
+  end
+
+  rule space
+    [\s]+
+  end
+
+end
