@@ -1,11 +1,10 @@
-# as a general rule, each statement and expression is responsible for consuming the trailing space
 grammar Sql
   rule query
-    space? select_statement space* select_expressions (from_statement (join_statement)* )? <Query>
+    space* select_statement space (from_statement (join_statement)* )? <Query>
   end
 
   rule select_statement
-    'select' <Statement>
+    'select' space select_expressions <Statement>
   end
 
   rule join_statement
@@ -13,11 +12,11 @@ grammar Sql
   end
 
   rule select_expressions
-    select_expression space* (select_separator select_expression space*)* <Entity>
+    select_expression (select_separator select_expression)* <Entity>
   end
 
   rule select_separator
-    ',' space* <Entity>
+    space* ',' space* <Entity>
   end
 
   rule select_expression
