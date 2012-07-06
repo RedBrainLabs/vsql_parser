@@ -1,4 +1,4 @@
-grammar Sql
+grammar VSql
   rule query
     space*
     select_statement
@@ -121,7 +121,7 @@ grammar Sql
   end
 
   rule space
-    [\s]+
+    [\s]+ / ('--' (!"\n" .)+ )
   end
 
   rule keyword

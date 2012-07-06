@@ -1,5 +1,5 @@
 # In file parser.rb
-require_relative './sql_parser.rb'
+require_relative './vsql_parser.rb'
 
 module TestChamber
   module Helpers
@@ -9,7 +9,7 @@ module TestChamber
     end
   end
 
-  PARSER = SqlParser.new
+  PARSER = VSqlParser.new
   include Helpers
   extend self
 
@@ -24,7 +24,7 @@ module TestChamber
         STDERR.flush
         STDOUT.flush
         STDERR.puts( "\n" +
-                     colorize(42, sql[0..(fail_index - 1)]) +
+                     ((fail_index > 0) ? colorize(42, sql[0..(fail_index - 1)]) : "") +
                      colorize(41, sql[(fail_index)..-1]) +
                      "\n\n")
 
@@ -47,8 +47,8 @@ module TestChamber
     Object.send(:remove_const, :Sql) rescue nil
     TestChamber.send(:remove_const, :PARSER) rescue nil
 
-    load(File.join(SQLPARSER_BASE_PATH, 'node_extensions.rb'))
-    Treetop.load(File.join(SQLPARSER_BASE_PATH, 'sql_parser.treetop'))
+    load(File.join(VSQLPARSER_BASE_PATH, 'vsql_node_extensions.rb'))
+    Treetop.load(File.join(VSQLPARSER_BASE_PATH, 'vsql_parser.treetop'))
     load(__FILE__)
   end
 end

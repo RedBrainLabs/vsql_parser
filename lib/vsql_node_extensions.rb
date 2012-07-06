@@ -1,4 +1,4 @@
-module Sql
+module VSql
   module Helpers
     def self.find_elements(node, klass)
       results = []

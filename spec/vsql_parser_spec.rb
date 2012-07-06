@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SqlParser do
+describe VSqlParser do
   include TestChamber
 
   def assert_parse(sql)
@@ -135,4 +135,5 @@ EOF
   it "parses limit statements" do
     assert_parse("SELECT * FROM table LIMIT 1")
   end
+
 end
