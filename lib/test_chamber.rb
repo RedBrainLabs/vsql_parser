@@ -1,11 +1,5 @@
 # In file parser.rb
-require 'treetop'
-
-# Find out what our base path is
-BASE_PATH ||= File.expand_path(File.dirname(__FILE__))
-
-# Load our custom syntax node classes so the parser can use them
-load File.join(BASE_PATH, 'node_extensions.rb')
+require_relative './sql_parser.rb'
 
 NORMAL_COLOR ||= 37
 def colorize(color, output)
@@ -18,7 +12,6 @@ class Parser
   # create a new instance of that parser as a class variable
   # so we don't have to re-create it every time we need to
   # parse a string
-  Treetop.load(File.join(BASE_PATH, 'sql_parser.treetop'))
   $p = @@parser = SqlParser.new
 
   def self.parser
@@ -37,8 +30,8 @@ class Parser
                    colorize(41, data[(@@parser.max_terminal_failure_index)..-1]))
       STDERR.puts
       raise Exception, @@parser.failure_reason
-      STDERR.puts @@parser.failure_reason
-      return @@parser
+      # STDERR.puts @@parser.failure_reason
+      # return @@parser
     end
 
     # clean_tree(tree)
@@ -59,5 +52,7 @@ def reload
   Object.send(:remove_const, :Parser) rescue nil
   Object.send(:remove_const, :SqlParser) rescue nil
   Object.send(:remove_const, :Sql) rescue nil
+  load(File.join(SQLPARSER_BASE_PATH, 'node_extensions.rb'))
+  Treetop.load(File.join(SQLPARSER_BASE_PATH, 'sql_parser.treetop'))
   load(__FILE__)
 end
