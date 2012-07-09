@@ -40,8 +40,9 @@ module VSql
     def name
       return alias_node.text_value if alias_node
       case text_value
-      when /\*$/ then "*"
+      when /\*$/             then "*"
       when /^(\w+\.)?(\w+)$/ then $2
+      else                        "?column?"
       end
     end
   end
