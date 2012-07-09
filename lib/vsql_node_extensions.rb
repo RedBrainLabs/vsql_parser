@@ -1,13 +1,16 @@
 module VSql
   module Helpers
-    def self.find_elements(node, klass)
+    def self.find_elements(node, klass, skip_klass = nil)
       results = []
       return results unless node.elements
       node.elements.each do |e|
-        if e.is_a?(klass)
+        case
+        when e.is_a?(klass)
           results << e
+        when skip_klass && e.is_a?(skip_klass)
+          next
         else
-          results.concat(find_elements(e, klass))
+          results.concat(find_elements(e, klass, skip_klass))
         end
       end
       results
@@ -31,7 +34,7 @@ module VSql
     end
 
     def alias_node
-      @alias_node ||= Helpers.find_elements(self, Alias).first
+      @alias_node ||= Helpers.find_elements(self, Alias, Query).first
     end
 
     def name
