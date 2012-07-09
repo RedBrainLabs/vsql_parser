@@ -9,18 +9,16 @@ module TestChamber
     end
   end
 
-  PARSER = VSqlParser.new
   include Helpers
   extend self
 
   def parse(sql)
-    d_sql = sql.downcase
-    PARSER.parse(d_sql).tap do |tree|
-      d_sql.replace(sql) # un-downcase it
+    parser = ::VSqlParser.parser
+    VSqlParser.parse(sql).tap do |tree|
       # If the AST is nil then there was an error during parsing
       # we need to report a simple error message to help the user
       if tree.nil?
-        fail_index = PARSER.max_terminal_failure_index
+        fail_index = parser.max_terminal_failure_index
         STDERR.flush
         STDOUT.flush
         STDERR.puts( "\n" +
@@ -29,7 +27,7 @@ module TestChamber
                      "\n\n")
 
         STDERR.flush
-        raise Exception, PARSER.failure_reason
+        raise Exception, parser.failure_reason
       end
     end
   end
@@ -49,6 +47,7 @@ module TestChamber
 
     load(File.join(VSQLPARSER_BASE_PATH, 'vsql_node_extensions.rb'))
     Treetop.load(File.join(VSQLPARSER_BASE_PATH, 'vsql_parser.treetop'))
+    VSqlParser.extend(VSqlParserHelpers)
     load(__FILE__)
   end
 end
