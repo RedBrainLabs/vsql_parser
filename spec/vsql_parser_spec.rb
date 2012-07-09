@@ -104,6 +104,15 @@ EOF
     it "supports nested AND / OR expressions" do
       assert_parse("SELECT * FROM table WHERE (field1 = field2 OR field1 IS NULL) AND (field2 > (field3 + 5))")
     end
+
+    it "supports IN clauses" do
+      assert_parse("SELECT * FROM table WHERE field1 IN ('value1', 'value2') AND field2 IN (1, 2, 3)")
+    end
+
+    it "supports comparisons of numeric literals" do
+      assert_parse("SELECT * FROM table WHERE field1 > 5.3")
+    end
+
   end
 
   context "GROUP BY" do

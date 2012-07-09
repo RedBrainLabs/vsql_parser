@@ -73,7 +73,26 @@ grammar VSql
       /
       sub_expression)
     ('::' [\w]+)? # cast
-    (space* operator space? expression)?
+    (space? set_operator space? (set))*
+    (space? operator space? expression)?
+  end
+
+  rule set
+    set_literal
+    /
+    '(' query ')'
+  end
+
+  rule set_literal
+    '(' space? primitive_literal (space? ',' space? primitive_literal)* space? ')'
+  end
+
+  rule primitive_literal
+    numeric_literal / string_literal
+  end
+
+  rule numeric_literal
+    [0-9]+ ("." [0-9]+)?
   end
 
   rule sub_expression
@@ -81,15 +100,19 @@ grammar VSql
     /
     function
     /
-    string_literal
+    primitive_literal
     /
     field_entity
+  end
+
+  rule set_operator
+    'not in' / 'in' &space
   end
 
   rule operator
     [+\-/=\|><!]+
     /
-    ('is not' / 'is' / 'like' / 'not in' / 'in' / 'between' / 'and' / 'or') &space
+    ('is not' / 'is' / 'like' / 'between' / 'and' / 'or') &space
   end
 
   rule case_statement
