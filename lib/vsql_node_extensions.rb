@@ -37,17 +37,31 @@ module VSql
       @alias_node ||= Helpers.find_elements(self, Alias, Query).first
     end
 
+    def root_nodes
+      elements[0].elements.select { |e| ! e.text_value.empty? }
+    end
+
     def name
       return alias_node.text_value if alias_node
-      case text_value
-      when /\*$/             then "*"
-      when /^(\w+\.)?(\w+)$/ then $2
+      case
+      when text_value =~ /\*$/
+        "*"
+      when text_value =~ /^(\w+\.)?(\w+)$/
+        $2
+      when root_nodes.length == 1 && root_nodes.first.is_a?(Function)
+        root_nodes.first.name
       else                        "?column?"
       end
     end
   end
 
   class Alias < Treetop::Runtime::SyntaxNode
+  end
+
+  class Function < Treetop::Runtime::SyntaxNode
+    def name
+      elements[0].text_value
+    end
   end
 
   class Entity < Treetop::Runtime::SyntaxNode

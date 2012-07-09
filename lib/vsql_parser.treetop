@@ -128,7 +128,7 @@ grammar VSql
   end
 
   rule function
-    [\w]+ space* '(' (expression / ',' / space)* ')' <Entity>
+    [\w]+ space* '(' (expression / ',' / space)* ')' <Function>
   end
 
   rule string_literal

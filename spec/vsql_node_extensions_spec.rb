@@ -24,10 +24,16 @@ describe "Node Extensions" do
         expressions.map(&:name).should == ["*", "*"]
       end
 
-      it "returns ?column? for expressions selecting from functions, equations, etc." do
-        expressions = expressions_for('SELECT count(*), case when true then 3 else 2 end')
+      it "returns ?column? for expressions selecting from complex expressions" do
+        expressions = expressions_for('SELECT count(*) + 1, case when true then 3 else 2 end')
         expressions.map(&:name).should == ["?column?", "?column?"]
       end
+
+      it "returns the function name" do
+        expressions = expressions_for('SELECT count(*), min(field1)')
+        expressions.map(&:name).should == ["count", "min"]
+      end
+
     end
   end
 end
