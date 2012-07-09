@@ -19,7 +19,7 @@ grammar VSql
   end
 
   rule join_statement
-    ('left' / 'outer' / 'inner' / 'right' / 'full' / space)* 'join' space expression space* ('as' space)? (alias space)? 'on' space expression
+    ('left' / 'outer' / 'inner' / 'right' / 'full' / space)* 'join' space expression (space alias)? space 'on' space expression
   end
 
   rule where_statement
@@ -55,13 +55,16 @@ grammar VSql
   end
 
   rule select_expression
-    expression (space 'as' space alias)? <SelectExpression>
+    expression (space alias)? <SelectExpression>
   end
 
   rule alias
-    '"' [^\"]+ '"'
-    /
-    (!(keyword)) [\w]+
+    ('as' space)?
+    (
+      '"' ([^\"]+ <Alias>) '"'
+      /
+      (!(keyword)) [\w]+ <Alias>
+    )
   end
 
   rule expression
@@ -139,7 +142,7 @@ grammar VSql
   end
 
   rule from_statement
-    'from' space+ from_expression ((space 'as')? space alias)? <Statement>
+    'from' space+ from_expression (space alias)? <Statement>
   end
 
   rule from_expression

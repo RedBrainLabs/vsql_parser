@@ -27,6 +27,23 @@ module VSql
   end
 
   class SelectExpression < Treetop::Runtime::SyntaxNode
+    def expression_sql
+    end
+
+    def alias_node
+      @alias_node ||= Helpers.find_elements(self, Alias).first
+    end
+
+    def name
+      return alias_node.text_value if alias_node
+      case text_value
+      when /\*$/ then "*"
+      when /^(\w+\.)?(\w+)$/ then $2
+      end
+    end
+  end
+
+  class Alias < Treetop::Runtime::SyntaxNode
   end
 
   class Entity < Treetop::Runtime::SyntaxNode
