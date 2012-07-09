@@ -116,7 +116,12 @@ grammar VSql
   end
 
   rule case_statement
-    'case' space ('when' space expression space 'then' space expression space)* ('else' space expression space)? 'end' <Entity>
+    'case'
+    (space !('when') expression)?
+    (space 'when' space expression space 'then' space expression)*
+    (space 'else' space expression)?
+    space 'end' <Entity>
+
   end
 
   rule function

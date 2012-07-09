@@ -41,8 +41,13 @@ describe VSqlParser do
     end
 
     it "parses case statements" do
-      assert_parse("SELECT CASE WHEN not table.boolean THEN 5 ELSE NULL END")
+      assert_parse("SELECT CASE WHEN not table.boolean THEN 5 WHEN table.boolean THEN 3 ELSE NULL END")
     end
+
+    it "parses case expression when value statements" do
+      assert_parse("SELECT CASE table.value WHEN 1 THEN false WHEN 2 THEN true else NULL END")
+    end
+
 
     it "parses functions" do
       select_expressions("SELECT least(a,b),greatest(c,d + (5+LEAST(3,3)))").should ==
