@@ -59,7 +59,7 @@ grammar VSql
   end
 
   rule alias
-    '"' [^\"] '"'
+    '"' [^\"]+ '"'
     /
     (!(keyword)) [\w]+
   end

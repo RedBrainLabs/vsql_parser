@@ -32,6 +32,10 @@ describe VSqlParser do
       assert_parse('SELECT "table.field with spaces for whatever reason" FROM table')
     end
 
+    it "parses aliases surround by \"'s" do
+      select_expressions('SELECT value1 AS "end", value2 AS "from"').should == ['value1 AS "end"', 'value2 AS "from"']
+    end
+
     it "parses fields with specified source" do
       assert_parse("SELECT table.field FROM table")
     end
