@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+require 'pry'
+require_relative '../lib/test_chamber.rb'
+include(TestChamber)
+puts <<-EOF
+Pry interactive shell with TestChamber module included
+
+Helpers:
+
+* parse(sql)  - parse sql and return AST. Outputs human-friendly error message should an error occur.
+* reload      - reload the treetop and node extensions.
+
+EOF
+
+pry(self)
