@@ -16,7 +16,7 @@ grammar VSql
   end
 
   rule select_statement
-    'select' space select_expressions <SelectStatement>
+    'select' space (distinct_predicate space)? select_expressions <SelectStatement>
   end
 
   rule join_statement
@@ -101,6 +101,10 @@ grammar VSql
     '(' query ')'
   end
 
+  rule distinct_predicate
+    'distinct' / 'all'
+  end
+
   rule set_literal
     '(' space? primitive_literal (space? ',' space? primitive_literal)* space? ')'
   end
@@ -143,7 +147,7 @@ grammar VSql
   end
 
   rule function
-    [\w]+ space* '(' (expression / ',' / space)* ')' <Function>
+    [\w]+ space* '(' (distinct_predicate space)? (expression / ',' / space)* ')' <Function>
   end
 
   rule string_literal

@@ -53,11 +53,18 @@ describe VSqlParser do
     end
 
 
-    it "parses functions" do
-      select_expressions("SELECT least(a,b),greatest(c,d + (5+LEAST(3,3)))").should ==
-        [ "least(a,b)",
-          "greatest(c,d + (5+LEAST(3,3)))" ]
+    context "functions" do
+      it "parses" do
+        select_expressions("SELECT least(a,b),greatest(c,d + (5+LEAST(3,3)))").should ==
+          [ "least(a,b)",
+            "greatest(c,d + (5+LEAST(3,3)))" ]
+      end
+
+      it "parses when distinct predictate is present" do
+        select_expressions("SELECT COUNT(DISTINCT field.id)").should == ["COUNT(DISTINCT field.id)"]
+      end
     end
+
 
     it "parses boolean inverse expressions" do
       assert_parse("SELECT NOT true")
@@ -90,6 +97,14 @@ describe VSqlParser do
         assert_parse("SELECT MAX(field) OVER () - MIN(FIELD) OVER ()")
       end
 
+    end
+
+  end
+
+  context "SELECT" do
+    it "parses DISTINCT correctly" do
+      select_expressions("SELECT DISTINCT field1").should       == ["field1"]
+      select_expressions("SELECT DISTINCT field1 AS f1").should == ["field1 AS f1"]
     end
 
   end
