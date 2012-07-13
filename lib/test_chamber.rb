@@ -12,27 +12,31 @@ module TestChamber
   include Helpers
   extend self
 
-  def parse(sql)
+  def parse(sql, output_errors = true)
     parser = ::VSqlParser.parser
     VSqlParser.parse(sql).tap do |tree|
       # If the AST is nil then there was an error during parsing
       # we need to report a simple error message to help the user
       if tree.nil?
-        fail_index = parser.max_terminal_failure_index
-        STDERR.flush
-        STDOUT.flush
-        STDERR.puts( "\n" +
-                     ((fail_index > 0) ? colorize(42, sql[0..(fail_index - 1)]) : "") +
-                     colorize(41, sql[(fail_index)..-1]) +
-                     "\n\n")
-
-        STDERR.flush
+        output_error(sql, parser) if output_errors
         raise Exception, parser.failure_reason
       end
     end
   end
 
   private
+
+  def output_error(sql, parser)
+    fail_index = parser.max_terminal_failure_index
+    STDERR.flush
+    STDOUT.flush
+    STDERR.puts( "\n" +
+                 ((fail_index > 0) ? colorize(42, sql[0..(fail_index - 1)]) : "") +
+                 colorize(41, sql[(fail_index)..-1]) +
+                 "\n\n")
+
+    STDERR.flush
+  end
 
   def clean_tree(root_node)
     return if(root_node.elements.nil?)

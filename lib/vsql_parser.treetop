@@ -1,4 +1,5 @@
 grammar VSql
+
   rule query
     space*
     select_statement
@@ -68,7 +69,7 @@ grammar VSql
     (
       '"' ([^\"]+ <Alias>) '"'
       /
-      (!(keyword)) [\w]+ <Alias>
+      !(keyword word_boundary) [\w]+ <Alias>
     )
   end
 
@@ -175,8 +176,36 @@ grammar VSql
     ([\s]+ / ('--' (!"\n" .)+ ))+
   end
 
+  rule word_boundary
+    ![\w]
+  end
+
   rule keyword
-    'select' / 'from' / 'inner' / 'outer' / 'full' / 'left' / 'right' / 'join' / 'on' / 'where' / 'group by' / 'order by' / 'having' / 'limit' / 'union'
+    # 'select' / 'from' / 'inner' / 'outer' / 'full' / 'left' / 'right' / 'join' / 'on' / 'where' / 'group by' / 'order by' / 'having' / 'limit' / 'union'
+    (
+      'all' / 'analyse' / 'analyze' / 'and' / 'any' / 'array' / 'asc' / 'as' /
+      'binary' / 'both' /
+      'case' / 'cast' / 'check' / 'column' / 'constraint' / 'correlation' / 'create' / 'current_database' / 'current_date' / 'current_schema' / 'current_timestamp' / 'current_time' / 'current_user' /
+      'default' / 'deferrable' / 'desc' / 'distinct' / 'do' /
+      'else' / 'encoded' / 'end' / 'except' /
+      'false' / 'foreign' / 'for' / 'from' /
+      'grant' / 'grouped' / 'group' /
+      'having' /
+      'initially' / 'intersect' / 'intervalym' / 'interval' / 'into' / 'in' /
+      'join' /
+      'ksafe' /
+      'leading' / 'limit' / 'localtimestamp' / 'localtime' /
+      'match' /
+      'new' / 'not' / 'nullsequal' / 'null' /
+      'offset' / 'off' / 'old' / 'only' / 'on' / 'order' / 'or' /
+      'pinned' / 'placing' / 'primary' / 'projection' /
+      'references' /
+      'schema' / 'segmented' / 'select' / 'session_user' / 'some' / 'sysdate' /
+      'table' / 'then' / 'timeseries' / 'to' / 'trailing' / 'true' /
+      'unbounded' / 'union' / 'unique' / 'unsegmented' / 'user' / 'using' /
+      'when' / 'where' / 'window' / 'within' / 'with'
+    )
+    word_boundary
   end
 
 end

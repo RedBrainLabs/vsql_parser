@@ -9,6 +9,12 @@ describe VSqlParser do
     }.should_not raise_error
   end
 
+  def assert_not_parse(sql)
+    running {
+      parse sql, false
+    }.should raise_error
+  end
+
   def select_expressions(sql)
     parse(sql).select_statement.expressions.map(&:text_value)
   end
@@ -107,6 +113,15 @@ describe VSqlParser do
       select_expressions("SELECT DISTINCT field1 AS f1").should == ["field1 AS f1"]
     end
 
+    it "does not parse aliases named after reserved vertica keywords" do
+      assert_not_parse("SELECT field1 AS do")
+    end
+
+    it "parses aliases named after reserved vertica keywords, quoted" do
+      assert_parse('SELECT field1 AS "do"')
+      assert_parse('SELECT field1 AS do_not_disturb')
+    end
+
   end
 
   context "FROM parsing" do
@@ -203,8 +218,6 @@ WINDOW w AS (PARTITION BY system_id, user_id ORDER BY logged_in_at)
 WINDOW y AS (PARTITION BY system_id, user_id ORDER BY logged_out_at);
 EOF
     end
-
-
   end
 
   it "parses limit statements" do
