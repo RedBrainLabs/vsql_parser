@@ -71,6 +71,27 @@ describe VSqlParser do
     it "parses subqueries" do
       assert_parse("SELECT v in (select value from table2) as value_exists from table")
     end
+
+    context "windows" do
+
+      it "parses inline windows" do
+        select_expressions("SELECT FIRST_VALUE(coso) OVER (PARTITION BY field ORDER BY field2 RANGE BETWEEN 5 AND 20) AS first_coso").should == ['FIRST_VALUE(coso) OVER (PARTITION BY field ORDER BY field2 RANGE BETWEEN 5 AND 20) AS first_coso']
+      end
+
+      it "parses named window expressions" do
+        select_expressions("SELECT FIRST_VALUE(coso) OVER named_window AS first_coso").should == ['FIRST_VALUE(coso) OVER named_window AS first_coso']
+      end
+
+      it "parses empty window expressions" do
+        assert_parse("SELECT MAX(field) OVER ()")
+      end
+
+      it "parses window experssions as part of a large complex expression" do
+        assert_parse("SELECT MAX(field) OVER () - MIN(FIELD) OVER ()")
+      end
+
+    end
+
   end
 
   context "FROM parsing" do
@@ -148,6 +169,27 @@ EOF
     it "allows functions" do
       assert_parse("SELECT * FROM table ORDER BY date(field1) DESC")
     end
+  end
+
+  context "WINDOW" do
+    it "parses named windows" do
+      assert_parse <<EOF
+SELECT DISTINCT name, FIRST_VALUE(birthday) OVER w
+FROM user_sessions
+WINDOW w AS (PARTITION BY system_id, user_id ORDER BY logged_in_at);
+EOF
+    end
+
+    it "parses multiples named windows" do
+      assert_parse <<EOF
+SELECT DISTINCT name, FIRST_VALUE(birthday) OVER w
+FROM user_sessions
+WINDOW w AS (PARTITION BY system_id, user_id ORDER BY logged_in_at)
+WINDOW y AS (PARTITION BY system_id, user_id ORDER BY logged_out_at);
+EOF
+    end
+
+
   end
 
   it "parses limit statements" do

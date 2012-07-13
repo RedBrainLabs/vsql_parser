@@ -6,6 +6,7 @@ grammar VSql
       (space where_statement)?
       (space group_by_statement)?
       (space having_statement)?
+      (space window_statement)*
       (space order_by_statement)?
       (space limit_statement)?
       )?
@@ -28,6 +29,10 @@ grammar VSql
 
   rule having_statement
     'having' space expression
+  end
+
+  rule window_statement
+    'window' space field_entity space 'as' space window
   end
 
   rule group_by_statement
@@ -77,7 +82,17 @@ grammar VSql
       sub_expression)
     ('::' [\w]+)? # cast
     (space? set_operator space? (set))*
+    (space? inline_window)?
     (space? operator space? expression)?
+  end
+
+  rule inline_window
+    'over' space (window / field_entity)
+  end
+
+  # poorman window parsing right now... we'll need to beef this up if we use windows with parentheses
+  rule window
+    '(' [^\)]* ')'
   end
 
   rule set
