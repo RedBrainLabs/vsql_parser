@@ -111,7 +111,11 @@ grammar VSql
   end
 
   rule primitive_literal
-    numeric_literal / string_literal
+    interval_literal / numeric_literal / string_literal
+  end
+
+  rule interval_literal
+    'interval' space "'" [\w ]+ "'"
   end
 
   rule numeric_literal

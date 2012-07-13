@@ -50,6 +50,11 @@ describe VSqlParser do
       assert_parse("SELECT 'value'")
     end
 
+    it "parses interval literals" do
+      assert_parse("SELECT INTERVAL '60 day'")
+    end
+
+
     it "parses case statements" do
       assert_parse("SELECT CASE WHEN not table.boolean THEN 5 WHEN table.boolean THEN 3 ELSE NULL END")
     end
