@@ -74,7 +74,7 @@ grammar VSql
   end
 
   rule expression
-    ('not' space)?
+    prefix_modifier?
     (
       '(' query ')' <Query>
       /
@@ -85,6 +85,12 @@ grammar VSql
     (space? set_operator space? (set))*
     (space? inline_window)?
     (space? operator space? expression)?
+  end
+
+  rule prefix_modifier
+    'not' space
+    /
+    '-' space?
   end
 
   rule inline_window

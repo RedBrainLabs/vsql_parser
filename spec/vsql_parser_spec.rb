@@ -78,7 +78,11 @@ describe VSqlParser do
 
 
     it "parses boolean inverse expressions" do
-      assert_parse("SELECT NOT true")
+      assert_parse("SELECT NOT true, NOT(field AND field3)")
+    end
+
+    it "parses value negators" do
+      assert_parse("SELECT -field, -(field2 + 5)")
     end
 
     it "handles alises" do
