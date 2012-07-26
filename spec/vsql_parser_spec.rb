@@ -112,6 +112,9 @@ describe VSqlParser do
         assert_parse("SELECT MAX(field) OVER () - MIN(FIELD) OVER ()")
       end
 
+      it "allows them to be type-casted" do
+        assert_parse("SELECT MAX(field) OVER ()::numeric")
+      end
     end
 
   end

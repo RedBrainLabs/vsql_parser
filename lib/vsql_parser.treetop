@@ -81,9 +81,9 @@ grammar VSql
       '(' space? expression space? ')' <Entity>
       /
       sub_expression)
+    (space? inline_window)?
     ('::' [\w]+)? # cast
     (space? set_operator space? (set))*
-    (space? inline_window)?
     (space? operator space? expression)?
   end
 
