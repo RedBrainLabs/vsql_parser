@@ -42,17 +42,31 @@ module VSql
     end
 
     def name
-      return alias_node.text_value if alias_node
       case
-      when text_value =~ /\*$/
-        "*"
-      when text_value =~ /^(\w+\.)?(\w+)$/
-        $2
+      when alias_node
+        alias_node.text_value
       when root_nodes.length == 1 && root_nodes.first.is_a?(Function)
         root_nodes.first.name
-      else                        "?column?"
+      when root_nodes.length == 1 && root_nodes.first.is_a?(FieldRef)
+        element =
+          Helpers.find_elements(self, FieldGlob).last ||
+          Helpers.find_elements(self, Name).last
+        element.text_value
+      else "?column?"
       end
     end
+  end
+
+  class Name < Treetop::Runtime::SyntaxNode
+  end
+
+  class FieldRef < Treetop::Runtime::SyntaxNode
+  end
+
+  class TablePart < Treetop::Runtime::SyntaxNode
+  end
+
+  class FieldGlob < Treetop::Runtime::SyntaxNode
   end
 
   class Alias < Treetop::Runtime::SyntaxNode

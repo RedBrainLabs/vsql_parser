@@ -33,7 +33,7 @@ grammar VSql
   end
 
   rule window_statement
-    'window' space field_entity space 'as' space window
+    'window' space name_expression space 'as' space window
   end
 
   rule group_by_statement
@@ -94,7 +94,7 @@ grammar VSql
   end
 
   rule inline_window
-    'over' space (window / field_entity)
+    'over' space (window / name_expression)
   end
 
   # poorman window parsing right now... we'll need to beef this up if we use windows with parentheses
@@ -135,7 +135,7 @@ grammar VSql
     /
     primitive_literal
     /
-    field_entity
+    field_reference
   end
 
   rule set_operator
@@ -165,10 +165,18 @@ grammar VSql
     "'" [^\']+ "'"
   end
 
-  rule field_entity
-    '"' [\w\.\* ]+ '"' <QuotedEntity>
+  rule name_expression
+    '"' ([^\"]+ <Name>) '"'
     /
-    [\w\.\*]+ <Entity>
+    [\w]+ <Name>
+  end
+
+  rule field_glob
+    '*' <FieldGlob>
+  end
+
+  rule field_reference
+    (name_expression "." <TablePart>)? (name_expression / field_glob) <FieldRef>
   end
 
   rule from_statement

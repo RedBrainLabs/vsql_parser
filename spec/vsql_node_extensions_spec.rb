@@ -25,8 +25,13 @@ describe "Node Extensions" do
       end
 
       it "returns ?column? for expressions selecting from complex expressions" do
-        expressions = expressions_for('SELECT count(*) + 1, case when true then 3 else 2 end')
-        expressions.map(&:name).should == ["?column?", "?column?"]
+        expressions = expressions_for('SELECT count(*) + 1, case when true then 3 else 2 end, "table"."field" + 5')
+        expressions.map(&:name).should == ["?column?", "?column?", "?column?"]
+      end
+
+      it "returns quoted fields as the field" do
+        expressions = expressions_for('SELECT "my table"."*_date", "boogie"')
+        expressions.map(&:name).should == ["*_date", "boogie"]
       end
 
       it "returns the function name" do
